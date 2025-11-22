@@ -5492,7 +5492,7 @@ local radius = 10
 			"Settings"	
 		},
 		CheatName = "bloxsense.pub",
-		UserType = env.login and env.login.username or "Public User",
+		UserType = env.login and env.login.username or "Normal User",
 		UIcolors = Themes.default,
 		TextFont = {
 			CheatTextSize = 14,
@@ -6107,6 +6107,7 @@ UILibrary:CreateTextBox({Name = "Id", Tab = "Visuals", Section = "Player",Defaul
 		UILibrary:CreateButton({Name = "Unlock Inventory", Tab = "Misc", Section = "Exploits"})
 		UILibrary:CreateButton({Name = "Shot players become mush", Tab = "Misc", Section = "Exploits"})
 		UILibrary:CreateButton({Name = "Minecraft Textures", Tab = "Misc", Section = "Exploits"})
+		
 local OriginalMaterials = {}
 local texturesApplied = false
 
@@ -6924,7 +6925,7 @@ end)
 
 						local elasticity = (pA.Elasticity*pA.ElasticityWeight + pB.Elasticity*pB.ElasticityWeight)/(pA.ElasticityWeight+pB.ElasticityWeight)
 						local friction = (pA.Friction*pA.FrictionWeight + pB.Friction*pB.FrictionWeight)/(pA.FrictionWeight+pB.FrictionWeight)
-						-- check the weighting https://Public User.roblox.com/en-us/api-reference/datatype/PhysicalProperties
+						-- check the weighting https://developer.roblox.com/en-us/api-reference/datatype/PhysicalProperties
 						local dotprod = 1 - math.abs(v0.Unit:Dot(normal))
 
 						x0 = self:Position(x0, v0, t)
@@ -14296,7 +14297,6 @@ end)
 	-- weird shit smei asked me to make
 	UILibrary:Initialize()
 	Library.UI:EventLog("Press INSERT or DELETE to open / close the Menu!", 5)
-	Library.UI:EventLog("BloxSense.pub's Founder is Catboy Addict (kingenicklazimdegil)!", 5)
 	Library.UI:EventLog(string.format("Loaded in %s second(s)!", tostring(mathModule.truncateNumber(os.clock() - cheatLoadingStartTick, 3))), 5)
 	
 	Menu["Settings"]["Menu Settings"]["Watermark"]["Toggle"]["Enabled"] = true
