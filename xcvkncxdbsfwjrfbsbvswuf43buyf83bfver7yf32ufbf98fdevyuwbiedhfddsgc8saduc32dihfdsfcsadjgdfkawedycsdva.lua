@@ -7611,7 +7611,7 @@ for i,v in next, character:GetChildren() do
             local data = {}
             data.weld = weld
             data.line = visuals.createDrawing("Line", {
-                Thickness = 1,
+                Thickness = 2,
                 Color = Menu["ESP"][section]["Skeleton"]["Color 1"]["Color"],
                 Visible = false,
                 Transparency = 0.5
@@ -13675,8 +13675,8 @@ end)
 					local resultOfDepressionAndLonliness = workspaceRaycast(workspace, args[1].Origin, args[1].Direction, enterParam)
 					return resultOfDepressionAndLonliness and resultOfDepressionAndLonliness.Instance or nil, resultOfDepressionAndLonliness and resultOfDepressionAndLonliness.Position or (args[1].Origin + args[1].Direction), resultOfDepressionAndLonliness and resultOfDepressionAndLonliness.Normal or emptyVec3, resultOfDepressionAndLonliness and resultOfDepressionAndLonliness.Material or nil										
 				end
-			elseif method == "SetPrimaryPartCFrame" then
-				if self.Name:find("Arms") and localPlayer.Character then
+			elseif method == "PivotTo" then
+				if self.Name == "Arms" and self.Parent == workspace.CurrentCamera then
 					if Menu["Visuals"]["Camera"]["Disable Weapon Swaying"]["Toggle"]["Enabled"] then
 						args[1] = camera.CFrame
 					end
@@ -14296,8 +14296,9 @@ end)
 
 	-- weird shit smei asked me to make
 	UILibrary:Initialize()
-	Library.UI:EventLog("Press INSERT or DELETE to open / close the Menu!", 5)
-	Library.UI:EventLog(string.format("Loaded in %s second(s)!", tostring(mathModule.truncateNumber(os.clock() - cheatLoadingStartTick, 3))), 5)
+	Library.UI:EventLog("Press INSERT or DELETE to open / close the Menu!", 10)
+	Library.UI:EventLog("Get Good, Get Bloxsense. We are on .gg/KjCFrTCDKV!", 10)
+	Library.UI:EventLog(string.format("Loaded in %s second(s)!", tostring(mathModule.truncateNumber(os.clock() - cheatLoadingStartTick, 3))), 10)
 	
 	Menu["Settings"]["Menu Settings"]["Watermark"]["Toggle"]["Enabled"] = true
 	Menu["Settings"]["Menu Settings"]["Keybinds"]["Toggle"]["Enabled"] = false
