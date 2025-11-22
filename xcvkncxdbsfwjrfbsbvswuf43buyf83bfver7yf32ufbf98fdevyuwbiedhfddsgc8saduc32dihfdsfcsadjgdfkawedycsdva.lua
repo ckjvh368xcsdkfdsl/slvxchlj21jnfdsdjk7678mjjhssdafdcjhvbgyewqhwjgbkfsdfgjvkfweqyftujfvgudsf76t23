@@ -1,6 +1,4 @@
---// shit version of it but it doesnt lag so that's the point nigger.
---// he's using a base64 encoding for this :sob: :sob:
---// chez if you're here luv u bro :heart:
+--// xd
 	local cheatLoadingStartTick = os.clock()
 
 	local tick = tick
@@ -5598,6 +5596,11 @@ local radius = 10
 		UILibrary:CreateButton({Name = "Auto Shoot", Tab = "Rage", Section = "Aimbot", Tooltip = "Controls if the aimbot shoots automatically once a target is found"})
 		UILibrary:CreateDropdown({Name = "Auto Shoot Type", Tab = "Rage", Section = "Aimbot", Values = {"Standard", "Aura"}, Tooltip = "Controls the type of Auto Shoot. Aura rapidly kill all targets at the same time regardless of obstruction."})
 
+		UILibrary:CreateButton({Name = "Demonstrate Shooting Animation", Tab = "Rage", Section = "Settings", Tooltip = "Yeah, yeah,yea"})
+		UILibrary:CreateButton({Name = "Bypass Rate Limit", Tab = "Rage", Section = "Settings", Tooltip = "Yeah, yeah,yea"})
+		UILibrary:CreateSlider({Name = "Hit Per Second", Tab = "Rage", Section = "Settings", MinimumNumber = 1, MaximumNumber = 10, Suffix = " HPS", Tooltip = "yeh yeh yeh"})
+		UILibrary:CreateButton({Name = "Custom Gun Icon", Tab = "Rage", Section = "Settings", Tooltip = "Logs Who You Shot At (ragebot only)"})
+		UILibrary:CreateDropdown({Name = "Gun You Want To Change", Tab = "Rage", Section = "Settings", Values = {"Glock", "USP", "CZ", "DesertEagle", "R8", "AK47", "SG" ,"MP9", "P90", "Bizon", "Famas", "Galil", "AUG", "AWP", "Scout", "G3SG1", "CT Knife" ,"T Knife", "Banana", "Bayonet", "Butterfly Knife", "Cleaver", "Crowbar", "Falchion Knife", "Flip Knife", "Gut Knife", "Huntsman Knife", "Karambit", "Sickle", "Multimeter"}})
 		UILibrary:CreateButton({Name = "Hit Logs", Tab = "Rage", Section = "Settings", Tooltip = "Logs Who You Shot At (ragebot only)"})
 		UILibrary:CreateSlider({Name = "Hit Logs Delay", Tab = "Rage", Section = "Settings", MinimumNumber = 0, MaximumNumber = 10, Suffix = " .sec", Tooltip = "yeh yeh yeh"})
 
@@ -5630,6 +5633,8 @@ local radius = 10
 		UILibrary:CreateButton({Name = "Multi Point", Tab = "Rage", Section = "HvH", Tooltip = "Controls if the aimbot considers spots on the hitbox outside of the direct center."})
 		UILibrary:CreateSlider({Name = "Multi Point Scale", Tab = "Rage", Section = "HvH", MinimumNumber = 1, MaximumNumber = 8500, Suffix = "%", Tooltip = "Controls up to how far from the direct center of the hitbox the aimbot is allowed to consider shooting at."})
 		UILibrary:CreateDropdown({Name = "Multi Point Points", Tab = "Rage", Section = "HvH", Values = {"Head", "Chest", "Pelvis", "Arms", "Legs", "Feet"}, MultiChoice = true, Tooltip = "Controls which multipoint hitboxes the aimbot will consider. Note that these hitboxes must also be selected in the weapon config."})
+        UILibrary:CreateButton({Name = "Movement Track", Tab = "Rage", Section = "Tracking"})
+		UILibrary:CreateSlider({Name = "How Far", Tab = "Rage", Section = "Tracking", MinimumNumber = 1, MaximumNumber = 100, Suffix = "disc"})
 
 		UILibrary:CreateButton({Name = "Loop Kill", Tab = "Rage", Section = "Hitpart", Tooltip = "loop keel"})
 		UILibrary:CreateDropdown({Name = "Player in Focus", Tab = "Rage", Section = "Hitpart", Values = {}})
@@ -11298,92 +11303,46 @@ end)
 			--local bodyFireAnimation = debug.getupvalue(client.usethatgun, 29)
 			--bodyFireAnimation:Play()
 		end
-function ragebot.fire(Parameters) -- everything that takes place once someone CAN be shot
-		if client.fgun == "none" then
-			return
-		end
-		if not Menu["Rage"]["Aimbot"]["Silent Aim"]["Toggle"]["Enabled"] then
-			camera.CFrame = newCframe(camera.CFrame.p, ragebot.currenttarget.position)
-		end
-        if Menu["Rage"]["Aimbot"]["Auto Shoot"]["Toggle"]["Enabled"] then
-            local connection
-            connection = runService.Heartbeat:Connect(function()
-                connection:Disconnect()
-        
-                local origin = Parameters.origin
-        
-                local gunstats = {
-                    maxPenetration = client.fgun.Penetration.Value * 0.02,
-                    maxWalls = 9999e9999,
-                }
-        
-                for _ = 1, client.fgun.Bullets.Value do
-                    hitPart:FireServer(
-                        Menu["Rage"]["HvH"]["Force Headshots"]["Toggle"]["Enabled"]
-                            and Parameters.instance.Parent.Head or Parameters.instance,
-                        Parameters.position,
-                        client.fgun.Name,
-                        -9999e9999,
-                        localPlayer.Character:FindFirstChild("Gun"),
-                        nil,
-                        9999e9999,
-                        false,
-                        Parameters.wallbang,
-                        Parameters.origin,
-                        -9999e9999,
-                        zeroVec3,
-                        true,
-                        "r",
-                        nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil
-                    )
-                end
-        
-        
-                local function getAllValidTargets()
-                    local targets = {}
-                    for _, player in pairs(game.Players:GetPlayers()) do
-                        if player ~= localPlayer and player.Character and player.Character:FindFirstChild("Humanoid") then
-                            if player.Character.Humanoid.Health > 0 then
-                                table.insert(targets, player.Character)
-                            end
-                        end
-                    end
-                    return targets
-                end
-        
-                local targets = getAllValidTargets()
-                for _, target in pairs(targets) do
-                    if Parameters.instance:IsDescendantOf(target) then continue end
-        
-                    local targetPart = Menu["Rage"]["HvH"]["Force Headshots"]["Toggle"]["Enabled"]
-                        and target:FindFirstChild("Head") or target:FindFirstChild("HumanoidRootPart") or target.PrimaryPart
-        
-                    if targetPart then
-                        local canHit = ragebot.autowall(origin, targetPart.Position, {localPlayer.Character}, gunstats)
-                        if canHit then
-                            for _ = 1, client.fgun.Bullets.Value do
-                                hitPart:FireServer(
-                                    targetPart,
-                                    Parameters.position,
-                                    client.fgun.Name,
-                                    -9999e9999,
-                                    localPlayer.Character:FindFirstChild("Gun"),
-                                    nil,
-                                    9999e9999,
-                                    false,
-                                    Parameters.wallbang,
-                                    Parameters.origin,
-                                    -9999e9999,
-                                    zeroVec3,
-                                    true,
-                                    "r",
-                                    nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil
-                                )
-                            end
-                        end
-                    end
-                end
-            end)    
+
+		function ragebot.fire(Parameters) -- everything that takes place once someone CAN be shot
+			if client.fgun == "none" then
+				return
+			end
+			if not Menu["Rage"]["Aimbot"]["Silent Aim"]["Toggle"]["Enabled"] then
+				camera.CFrame = newCframe(camera.CFrame.p, ragebot.currenttarget.position)
+			end
+				if Menu["Rage"]["Aimbot"]["Auto Shoot"]["Toggle"]["Enabled"] then
+					local shotsPerSecond = 10
+					local delay = 1 / shotsPerSecond
+					for i = 0, Menu["Rage"]["Settings"]["Hit Per Second"]["Value"] do
+						hitPart:FireServer(
+							Menu["Rage"]["HvH"]["Force Headshots"]["Toggle"]["Enabled"] and Parameters.instance.Parent.Head or Parameters.instance,
+							Parameters.position,
+							not Menu["Rage"]["Settings"]["Custom Gun Icon"]["Toggle"]["Enabled"] and client.fgun.Name or Menu["Rage"]["Settings"]["Gun You Want To Change"]["Value"],
+							client.fgun.Range.Value,
+							localPlayer.Character:FindFirstChild("Gun"),
+							nil,
+							4,
+							false,
+							Parameters.wallbang,
+							Parameters.origin,
+							workspace.DistributedTime.Value,
+							emptyVec3,
+							true,
+							"r",
+							nil,
+							nil,
+							nil,
+							nil,
+							nil,
+							nil,
+							nil,
+							nil,
+							nil,
+							nil,
+							nil
+						)
+						
 			if Menu["Rage"]["Aimbot"]["Auto Shoot Type"]["Value"] == "Standard" then
 				ragebot.fakeshoot({walls = Parameters.walls})
 			end
@@ -11400,6 +11359,25 @@ function ragebot.fire(Parameters) -- everything that takes place once someone CA
 			end			
 		end
 	end 
+	
+			if Menu["Rage"]["Settings"]["Demonstrate Shooting Animation"]["Toggle"]["Enabled"] then
+				ragebot.fakeshoot({walls = Parameters.walls})
+			end
+			if Parameters.origintype == "Auto Peek" then
+				localPlayer.Character.HumanoidRootPart.Position = Parameters.origin
+			end
+			-- Asscoder adds soudns
+			-- stop looking at my girl ragebot
+		
+			if Menu["Rage"]["Settings"]["Hit Logs"]["Toggle"]["Enabled"] then
+				setthreadidentity(3)
+				Library.UI:EventLog("Bloxsense: Shot at " .. ragebot.currenttarget.player.Name .. " for " .. tostring(math.floor(Parameters.damageInflicted + 0.5)) .. ", in the " .. ragebot.currenttarget.instance.Name .. "\n( " .. tostring(math.clamp(math.floor(Parameters.instance.Parent.Humanoid.Health - (Parameters.damageInflicted * client.gun.Bullets.Value) + 0.5), 0, 100)) .. " hp remaining)" .. " (type: " .. Parameters.type .. ", origin: " .. Parameters.origintype .. ")", Menu["Rage"]["Settings"]["Hit Logs Delay"]["Value"])
+				setthreadidentity(8)
+			end
+		end
+		
+
+
 		--warning autowall is kinda scuffed it ,makes u look like stormy paste user
 		--nnvm i know how to fix fix
 
@@ -11713,6 +11691,17 @@ function ragebot.fire(Parameters) -- everything that takes place once someone CA
             end
         end
     end
+
+    -- LOL LOL ODFL HDUJKL:DRUo2w7op3474tukmh
+    game:GetService("RunService").RenderStepped:Connect(function()
+        for i, v in pairs(game:GetService("Players"):GetPlayers()) do
+            if Menu["Rage"]["Tracking"]["Movement Track"]["Toggle"]["Enabled"] then
+                if alive == true and v.Team ~= game.Players.LocalPlayer.Team and v ~= game.Players.LocalPlayer then
+                    v.Character.Head.Position = v.Character.HumanoidRootPart.Position + v.Character.Humanoid.MoveDirection * Menu["Rage"]["Tracking"]["How Far"]["Value"]
+                end
+            end
+        end
+    end)
 
 			-- since we have backtracking and are able to shoot at where the enemy was previously, try to scan their previous positions
 			if Menu["Rage"]["Tracking"]["Back Tracking"]["Toggle"]["Enabled"] then
@@ -14296,9 +14285,8 @@ end)
 
 	-- weird shit smei asked me to make
 	UILibrary:Initialize()
-	Library.UI:EventLog("Press INSERT or DELETE to open / close the Menu!", 10)
-	Library.UI:EventLog("Get Good, Get Bloxsense. We are on .gg/KjCFrTCDKV!", 10)
-	Library.UI:EventLog(string.format("Loaded in %s second(s)!", tostring(mathModule.truncateNumber(os.clock() - cheatLoadingStartTick, 3))), 10)
+	Library.UI:EventLog("Press INSERT or DELETE to open / close the Menu!", 5)
+	Library.UI:EventLog(string.format("Loaded in %s second(s)!", tostring(mathModule.truncateNumber(os.clock() - cheatLoadingStartTick, 3))), 5)
 	
 	Menu["Settings"]["Menu Settings"]["Watermark"]["Toggle"]["Enabled"] = true
 	Menu["Settings"]["Menu Settings"]["Keybinds"]["Toggle"]["Enabled"] = false
