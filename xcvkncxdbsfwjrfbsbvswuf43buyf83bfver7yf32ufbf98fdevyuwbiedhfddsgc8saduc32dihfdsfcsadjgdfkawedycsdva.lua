@@ -1,4 +1,6 @@
---// xd
+--// shit version of it but it doesnt lag so that's the point nigger.
+--// he's using a base64 encoding for this :sob: :sob:
+--// chez if you're here luv u bro :heart:
 	local cheatLoadingStartTick = os.clock()
 
 	local tick = tick
@@ -3373,7 +3375,7 @@
 			})
 
 			local stats = game.Players.LocalPlayer.Status
-
+			
 local function updateWatermark()
 	local kills = stats.Kills.Value
 	local deaths = stats.Deaths.Value
@@ -6354,6 +6356,8 @@ end)
 					watermark.Enabled = false
 				end
 			end)
+
+
 		UILibrary:CreateButton({Name = "Keybinds", Tab = "Settings", Section = "Menu Settings", Callback = function(toggled) Library.UI.KeyBindContainer.Visible = toggled end})
 		UILibrary:CreateButton({Name = "Use List Size", Tab = "Settings", Section = "Menu Settings", Callback = function(toggled) Library.UI.UseListSize = toggled end})
 		UILibrary:CreateButton({Name = "Custom Menu Name", Tab = "Settings", Section = "Menu Settings"})
@@ -14282,6 +14286,7 @@ end)
 	env.Hack.movement = movement
 	env.Hack.playerInfo = playerInfo
 	env.Hack.raycastUtils = raycastUtils
+	
 
 	-- weird shit smei asked me to make
 	UILibrary:Initialize()
@@ -14293,3 +14298,128 @@ end)
 
 	writefile("bloxsense/bloxsense_configs/" .. "off" .. ".cfg", UILibrary:SaveConfiguration()); 
 	Menu["Settings"]["Configurations"]["Configs"].UpdateValues(getconfigs())
+	
+	task.wait(5)
+local Players = game:GetService("Players")
+local LocalPlayer = Players.LocalPlayer
+local Camera = workspace.CurrentCamera
+
+-- === GUI ===
+
+local SpectatorGui = Instance.new("ScreenGui")
+SpectatorGui.Name = "SpectatorsList"
+SpectatorGui.Parent = game.CoreGui
+SpectatorGui.Enabled = true -- toggle için
+
+-- ▼ Çok hafif blur (border yok)
+local Blur = Instance.new("Frame")
+Blur.Parent = SpectatorGui
+Blur.Size = UDim2.new(0, 150, 0, 180)
+Blur.AnchorPoint = Vector2.new(1, 0.5)
+Blur.Position = UDim2.new(0.99, 0, 0.5, 0)
+Blur.BackgroundTransparency = 1
+Blur.BorderSizePixel = 0
+
+-- Blur effect sadece ışıkta
+local BlurEffect = Instance.new("BlurEffect")
+BlurEffect.Size = 0
+BlurEffect.Parent = game.Lighting
+
+-- Ana panel
+local Main = Instance.new("Frame")
+Main.Parent = Blur
+Main.Size = UDim2.new(1, 0, 1, 0)
+Main.BackgroundTransparency = 1
+Main.BorderSizePixel = 0
+Main.Active = true
+Main.Draggable = true
+
+local ListFrame = Instance.new("Frame")
+ListFrame.Size = UDim2.new(1, 0, 1, 0)
+ListFrame.BackgroundTransparency = 1
+ListFrame.BorderSizePixel = 0
+ListFrame.Parent = Main
+
+local Layout = Instance.new("UIListLayout")
+Layout.Parent = ListFrame
+Layout.Padding = UDim.new(0, 3)
+
+
+-- === ITEM ===
+
+local function CreateItem(plr)
+    local Item = Instance.new("Frame")
+    Item.Size = UDim2.new(1, 0, 0, 32)
+    Item.BackgroundTransparency = 1
+    Item.BorderSizePixel = 0
+    Item.Parent = ListFrame
+
+    -- Avatar
+    local Avatar = Instance.new("ImageLabel")
+    Avatar.Parent = Item
+    Avatar.Size = UDim2.new(0, 28, 0, 28)
+    Avatar.Position = UDim2.new(0, 0, 0.5, -14)
+    Avatar.BackgroundTransparency = 1
+    Avatar.BorderSizePixel = 0
+    Avatar.Image = Players:GetUserThumbnailAsync(plr.UserId, Enum.ThumbnailType.HeadShot, Enum.ThumbnailSize.Size100x100)
+
+    -- Name
+    local Name = Instance.new("TextLabel")
+    Name.Parent = Item
+    Name.Size = UDim2.new(1, -32, 1, 0)
+    Name.Position = UDim2.new(0, 32, 0, 0)
+    Name.BackgroundTransparency = 1
+    Name.BorderSizePixel = 0
+    Name.Text = plr.Name
+    Name.Font = Enum.Font.GothamSemibold
+    Name.TextSize = 14
+    Name.TextColor3 = Color3.fromRGB(255,255,255)
+    Name.TextXAlignment = Enum.TextXAlignment.Left
+end
+
+
+-- === SPECTATOR BULMA ===
+
+local function GetSpectators()
+    local list = {}
+
+    for _, plr in ipairs(Players:GetPlayers()) do
+        if plr ~= LocalPlayer and not plr.Character then
+            local cam = plr:FindFirstChild("CameraCF")
+
+            if cam then
+                local dist = (cam.Value.Position - Camera.CFrame.Position).Magnitude
+                if dist < 10 then
+                    table.insert(list, plr)
+                end
+            end
+        end
+    end
+
+    return list
+end
+
+
+-- === LİSTE ===
+
+local function Refresh()
+    for _, obj in ipairs(ListFrame:GetChildren()) do
+        if obj:IsA("Frame") then
+            obj:Destroy()
+        end
+    end
+
+    for _, plr in ipairs(GetSpectators()) do
+        CreateItem(plr)
+    end
+end
+
+task.spawn(function()
+    while task.wait(0.15) do
+        if SpectatorGui.Enabled then
+            Refresh()
+        end
+    end
+end)
+
+return SpectatorGui
