@@ -5492,7 +5492,7 @@ local radius = 10
 			"Settings"	
 		},
 		CheatName = "bloxsense.pub",
-		UserType = env.login and env.login.username or "Developer",
+		UserType = env.login and env.login.username or "Public User",
 		UIcolors = Themes.default,
 		TextFont = {
 			CheatTextSize = 14,
@@ -6924,7 +6924,7 @@ end)
 
 						local elasticity = (pA.Elasticity*pA.ElasticityWeight + pB.Elasticity*pB.ElasticityWeight)/(pA.ElasticityWeight+pB.ElasticityWeight)
 						local friction = (pA.Friction*pA.FrictionWeight + pB.Friction*pB.FrictionWeight)/(pA.FrictionWeight+pB.FrictionWeight)
-						-- check the weighting https://developer.roblox.com/en-us/api-reference/datatype/PhysicalProperties
+						-- check the weighting https://Public User.roblox.com/en-us/api-reference/datatype/PhysicalProperties
 						local dotprod = 1 - math.abs(v0.Unit:Dot(normal))
 
 						x0 = self:Position(x0, v0, t)
