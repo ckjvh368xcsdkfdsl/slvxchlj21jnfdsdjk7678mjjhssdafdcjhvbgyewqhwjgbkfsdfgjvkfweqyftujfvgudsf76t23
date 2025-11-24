@@ -5515,6 +5515,14 @@ local radius = 10
 		end
 		return cfgs
 	end
+	
+	local function getscripts()
+		local scripts = {}
+		for i, v in next, (listfiles("bloxsense/bloxsense_luas")) do
+        scripts[1 + #scripts] = v:match("([^/\\]+)$")
+    end
+		return scripts
+	end
 
 	-- ANCHOR pasted menu setup
 	do
@@ -6098,7 +6106,7 @@ UILibrary:CreateTextBox({Name = "Id", Tab = "Visuals", Section = "Player",Defaul
 		UILibrary:CreateTap({Name = "Buy Weapons", Tab = "Misc", Section = "Extra", Confirmation = true})
 		UILibrary:CreateButton({Name = "Hit Sound", Tab = "Misc", Section = "Extra"})
 		UILibrary:CreateSlider({Name = "Hit Sound Volume", Tab = "Misc", Section = "Extra", MinimumNumber = 0, MaximumNumber = 100, Suffix = "%"})
-		UILibrary:CreateTextBox({Name = "Hit Sound ID", Tab = "Misc", Section = "Extra", Default = "3442683707"})
+		UILibrary:CreateDropdown({Name = "Hit Sound ID", Tab = "Misc", Section = "Extra", Values = {'Skeet', 'Fatality', 'Overwatch', 'Pop', 'Note', 'Percussion', 'Space', 'Electro', 'Vortex', 'Squash', 'Retro', 'Beepo', 'TF2', 'Osu Mint', 'Rocket', 'Vine Boom', 'Snap', 'Pow', 'Bell'}})
 		UILibrary:CreateButton({Name = "Kill Sound", Tab = "Misc", Section = "Extra"})
 		UILibrary:CreateSlider({Name = "Kill Sound Volume", Tab = "Misc", Section = "Extra", MinimumNumber = 0, MaximumNumber = 100, Suffix = "%"})
 		UILibrary:CreateTextBox({Name = "Kill Sound ID", Tab = "Misc", Section = "Extra", Default = "5902468562"})
@@ -6384,6 +6392,22 @@ end)
 		if not isfile("bloxsense/kill_say.txt") then
 			writefile("bloxsense/kill_say.txt", "{victim} was killed with a {weapon}\nsit nn dog")
 		end
+
+	-- Scripts
+	UILibrary:CreateDropdown({Name = "Scripts", Tab = "Settings", Section = "Scripts", Values = getscripts(), })
+	UILibrary:CreateTap({
+    	Name = "Load", Tab = "Settings", Section = "Scripts", Confirmation = true, 
+    	Callback = function() 
+			local data = readfile('bloxsense/bloxsense_luas/' .. Menu["Settings"]["Scripts"]["Scripts"]["Value"])
+			loadstring(data)()
+    	end
+	})
+	UILibrary:CreateTap({
+    	Name = "Reload", Tab = "Settings", Section = "Scripts", Confirmation = true, 
+    	Callback = function() 
+        	Menu["Settings"]["Scripts"]["Scripts"].UpdateValues(getscripts()) 
+    	end
+	})
 
 		UILibrary:CreateTextBox({Name = "Config Text", Tab = "Settings", Section = "Configurations", Default = getconfigs()[1]})
 		UILibrary:CreateDropdown({Name = "Configs", Tab = "Settings", Section = "Configurations", Values = getconfigs(), Callback = function(selection) Menu["Settings"]["Configurations"]["Config Text"]["Value"] = selection end})
@@ -12254,13 +12278,53 @@ end)
 		end
 		Menu["Misc"]["Extra"]["Infinite Money"]["Toggle"].Changed:Connect(misc.updatemoney)
 
-		function misc.hitplayer()
-			if localPlayer.Additionals.TotalDamage.Value > misc.olddamage then
-				if Menu["Misc"]["Extra"]["Hit Sound"]["Toggle"]["Enabled"] then
-					misc.hitsound.SoundId = "rbxassetid://" .. Menu["Misc"]["Extra"]["Hit Sound ID"]["Value"]
-					misc.hitsound.Volume = Menu["Misc"]["Extra"]["Hit Sound Volume"]["Value"] / 10
-					misc.hitsound:Play()
+function misc.hitplayer()
+		if localPlayer.Additionals.TotalDamage.Value > misc.olddamage then
+			if Menu["Misc"]["Extra"]["Hit Sound"]["Toggle"]["Enabled"] then
+				hitsoundID = Menu["Misc"]["Extra"]["Hit Sound ID"]["Value"]
+				if hitsoundID == 'Skeet' then
+					hitsoundID = '5447626464'
+				elseif hitsoundID == 'Overwatch' then
+					hitsoundID = '18410058858'
+				elseif hitsoundID == 'Pop' then
+					hitsoundID = '105543133746827'
+				elseif hitsoundID == 'Note' then
+					hitsoundID = '3466988045'
+				elseif hitsoundID == 'Space' then
+					hitsoundID = '3466982899'
+				elseif hitsoundID == 'Electro' then
+					hitsoundID = '3458224686'
+				elseif hitsoundID == 'TF2' then
+					hitsoundID = '3455144981'
+				elseif hitsoundID == 'Percussion' then
+					hitsoundID = '3466985670'
+				elseif hitsoundID == 'Osu Mint' then
+					hitsoundID = '81883450827543'
+				elseif hitsoundID == 'Rocket' then
+					hitsoundID = '9087976483'
+				elseif hitsoundID == 'Vine Boom' then
+					hitsoundID = '9088081730'
+				elseif hitsoundID == 'Snap' then
+					hitsoundID = '93172144688075'
+				elseif hitsoundID == 'Vortex' then
+					hitsoundID = '3466980212'
+				elseif hitsoundID == 'Squash' then
+					hitsoundID = '3466981613'
+				elseif hitsoundID == 'Pow' then
+					hitsoundID = '3516546035'
+				elseif hitsoundID == 'Bell' then
+					hitsoundID = '97724019712141'
+				elseif hitsoundID == 'Retro' then
+					hitsoundID = '3466984142'
+				elseif hitsoundID == 'Fatality' then
+					hitsoundID = '115982072912004'
+				elseif hitsoundID == 'Beepo' then
+					hitsoundID = '3466987025'
 				end
+				misc.hitsound.SoundId = "rbxassetid://" .. hitsoundID
+				misc.hitsound.Volume = Menu["Misc"]["Extra"]["Hit Sound Volume"]["Value"] / 10
+				misc.hitsound:Play()
+			end
 				local dmgdealt = localPlayer.Additionals.TotalDamage.Value - misc.olddamage
 				if Menu["Visuals"]["Camera"]["Hit Marker"]["Toggle"]["Enabled"] then
 					local upper = 4
@@ -14288,16 +14352,94 @@ end)
 	env.Hack.raycastUtils = raycastUtils
 	
 
-	-- weird shit smei asked me to make
-	UILibrary:Initialize()
-	Library.UI:EventLog("Press INSERT or DELETE to open / close the Menu!", 5)
-	Library.UI:EventLog(string.format("Loaded in %s second(s)!", tostring(mathModule.truncateNumber(os.clock() - cheatLoadingStartTick, 3))), 5)
-	
-	Menu["Settings"]["Menu Settings"]["Watermark"]["Toggle"]["Enabled"] = true
-	Menu["Settings"]["Menu Settings"]["Keybinds"]["Toggle"]["Enabled"] = false
+-- weird shit smei asked me to make
+if not (executor == "ScriptWare" and platform == "Mac") then
+    local debugText = {}
 
-	writefile("bloxsense/bloxsense_configs/" .. "off" .. ".cfg", UILibrary:SaveConfiguration()); 
-	Menu["Settings"]["Configurations"]["Configs"].UpdateValues(getconfigs())
+    -- this was made when you could inline the drawing lib in synapse, since thats no longer a thing, these functions stayed
+    local function SetDrawing(obj, prop, val)
+        obj[prop] = val
+    end
+
+    local function GetDrawing(obj, prop)
+        return obj[prop]
+    end
+
+    for i, v in next, ({"Network Send: ", "Network Recieve: ", "FPS: ", "Tick: ", "Memory Usage: ", "Status: ", "Connected"}) do
+        local Txt = visuals.createDrawing("Text", {["Size"] = 13, ["Center"] = false, ["Outline"] = true, ["Font"] = Drawing.Fonts.Plex, ["Color"] = Color3.fromRGB(255, 255, 255), ["Visible"] = true, ["Text"] = v})
+        debugText[v] = Txt
+        Txt.Position = Vector2.zero
+        if v ~= "Connected" then
+            SetDrawing(Txt, "Position", newVector2(8, (camera.ViewportSize.Y * 0.25) + (i * 15)))
+        else
+            SetDrawing(Txt, "Position", newVector2(GetDrawing(debugText["Status: "], "Position").X + GetDrawing(debugText["Status: "], "TextBounds").X, GetDrawing(debugText["Status: "], "Position").Y))
+        end
+    end
+    local RefreshTick = tick()
+    local FpsCount = 0
+    local OldIncoming
+    runService.RenderStepped:Connect(function(Time)
+        for i, v in next, (debugText) do
+            SetDrawing(v, "Visible", Menu["Settings"]["Menu Settings"]["Show Debug Info"]["Toggle"]["Enabled"])
+        end
+        FpsCount = FpsCount + 1
+        if tick() - RefreshTick > 1 then
+            local outgoing = game.Stats.PerformanceStats.NetworkSent:GetValue()
+            local incoming = game.Stats.PerformanceStats.NetworkReceived:GetValue()
+            -- Text
+            SetDrawing(debugText["Memory Usage: "], "Text", "Memory Usage: " .. math.floor(game.Stats.GetTotalMemoryUsageMb(game.Stats) + 0.5) .. " Mb")
+            SetDrawing(debugText["Network Send: "], "Text", "Network Send: " .. math.floor(outgoing + 0.5) .. " kbps")
+            SetDrawing(debugText["Network Recieve: "], "Text", "Network Recieve: " .. math.floor(incoming + 0.5) .. " kbps")
+            SetDrawing(debugText["FPS: "], "Text", "FPS: " .. FpsCount)
+            SetDrawing(debugText["Tick: "], "Text", "Tick: " .. math.floor(tick() + 0.5))
+
+            -- Colorz
+            if outgoing > 64 then
+                SetDrawing(debugText["Network Send: "], "Color", Color3.fromRGB(255, 0, 0))
+            else
+                SetDrawing(debugText["Network Send: "], "Color", Color3.fromRGB(255, 255, 255))
+            end
+            if incoming < 1 then
+                SetDrawing(debugText["Network Recieve: "], "Color", Color3.fromRGB(255, 0, 0))
+            else
+                SetDrawing(debugText["Network Recieve: "], "Color", Color3.fromRGB(255, 255, 255))
+            end
+            if incoming == OldIncoming then
+                SetDrawing(debugText["Connected"], "Text", "Disconnected")
+                SetDrawing(debugText["Connected"], "Color", Color3.new(255, 0, 0))
+            else
+                SetDrawing(debugText["Connected"], "Text", "Connected")
+                SetDrawing(debugText["Connected"], "Color", Color3.new(0, 255, 0))
+            end
+            FpsCount = 0
+            OldIncoming = incoming
+            RefreshTick = tick()
+        end
+    end)
+end
+UILibrary:Initialize()
+Library.UI:EventLog(string.format("Loaded in %s second(s)!", tostring(mathModule.truncateNumber(os.clock() - cheatLoadingStartTick, 3))), 5)
+Library.UI:EventLog("Press INSERT or DELETE to open / close the Menu!", 5)
+Menu["Settings"]["Menu Settings"]["Watermark"]["Toggle"]["Enabled"] = true
+Menu["Settings"]["Menu Settings"]["Keybinds"]["Toggle"]["Enabled"] = false
+
+writefile("bloxsense/bloxsense_configs/" .. "off" .. ".cfg", UILibrary:SaveConfiguration()); 
+Menu["Settings"]["Configurations"]["Configs"].UpdateValues(getconfigs())
+
+do
+    for i, v in next, (listfiles("bloxsense/bloxsense_auto_exec")) do
+        local success, err = pcall(function()
+            coroutine.wrap(function()
+                loadstring(readfile(v))()
+            end)()
+        end)
+        if not success then
+            Library.UI:EventLog("Failed to auto loaded script" .. v, 5)
+        else
+            Library.UI:EventLog("Auto loaded script" .. v, 5)
+        end
+    end
+end
 	
 	task.wait(5)
 local Players = game:GetService("Players")
